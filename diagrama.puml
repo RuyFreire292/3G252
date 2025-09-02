@@ -1,0 +1,196 @@
+@startuml
+    class GameObject {
+        
+        -posicion: Posicion
+        -velocidad: Velocidad
+        -activo: boolean
+        +actualizar()
+        +dibujar()
+        +obtenerBounds(): Rectangle
+    }
+    class ObjetoFisico {
+        
+        -masa: float
+        -coeficienteRestitucion: float
+        +aplicarFuerza(fuerza: Vector2D)
+        +manejarColision(otro: ObjetoFisico)
+    }
+    class ObjetoVisual {
+    
+        -color: Color
+        -visible: boolean
+        +cambiarColor(color: Color)
+        +mostrar()
+        +ocultar()
+    }
+    class EstadoJuego {
+       
+        +entrar()
+        +salir() 
+        +actualizar()
+        +manejarInput(input: Input)
+    }
+    class Posicion {
+        -x: float
+        -y: float
+        +mover(deltaX: float, deltaY: float)
+        +distancia(otra: Posicion): float
+    }
+    class Velocidad {
+        -vx: float
+        -vy: float
+        +acelerar(ax: float, ay: float)
+        +limitar(maxVel: float)
+    }
+    class Color {
+        -r: int
+        -g: int  
+        -b: int
+        -a: int
+        +mezclar(otro: Color): Color
+    }
+    class Pelota {
+        -radio: float
+        -trail: Lista~Posicion~
+        +rebotar()
+        +reiniciar()
+    }
+    class Paleta {
+        -ancho: float
+        -alto: float
+        +moverIzquierda()
+        +moverDerecha()
+        +centrar()
+    }
+    class Bloque {
+        -ancho: float
+        -alto: float
+        -resistencia: int
+        -tipo: TipoBloque
+        +recibirDanio(): boolean
+        +destruir()
+    }
+    class SistemaFisico {
+        -gravedad: Vector2D
+        -friccion: float
+        +actualizarObjetos(objetos: Lista~ObjetoFisico~)
+        +detectarColisiones(): Lista~Colision~
+        +resolverColision(colision: Colision)
+    }
+    class SistemaRenderizado {
+        -camara: Camara
+        +dibujarObjetos(objetos: Lista~ObjetoVisual~)
+        +aplicarEfectos(efectos: Lista~Efecto~)
+    }
+    class SistemaAudio {
+        -volumen: float
+        +reproducirSonido(sonido: Sonido)
+        +reproducirMusica(musica: Musica)
+        +detener()
+    }
+    class SistemaParticulas {
+        -particulas: Lista~Particula~
+        +emitir(posicion: Posicion, tipo: TipoParticula)
+        +actualizar()
+        +limpiar()
+    }
+    class Juego {
+        -estadoActual: EstadoJuego
+        -sistemaFisico: SistemaFisico
+        -sistemaRenderizado: SistemaRenderizado
+        -sistemaAudio: SistemaAudio
+        +inicializar()
+        +ejecutar()
+        +cambiarEstado(nuevoEstado: EstadoJuego)
+    }
+    class GestorNiveles {
+        -nivelActual: int
+        -configuracion: ConfiguracionNivel
+        +cargarNivel(numero: int)
+        +siguienteNivel()
+        +generarBloques(): Lista~Bloque~
+    }
+    class Marcador {
+        -puntuacion: int
+        -multiplicador: int
+        +sumarPuntos(puntos: int)
+        +aplicarMultiplicador()
+        +reiniciar()
+    }
+    class GestorVidas {
+        -vidasRestantes: int
+        -vidasMaximas: int
+        +perderVida(): boolean
+        +ganarVida()
+        +reiniciar()
+    }
+    class EstadoMenu {
+        -opcionSeleccionada: int
+        +navegarMenu()
+    }
+    class EstadoJugando {
+        -nivel: Nivel
+        -objetos: Lista~GameObject~
+        +pausar()
+        +reanudar()
+    }
+    class EstadoPausa {
+        -estadoPrevio: EstadoJuego
+        +reanudar()
+    }
+    class EstadoGameOver {
+        -puntuacionFinal: int
+        +reiniciar()
+        +volverMenu()
+    }
+    class PowerUp {
+        -tipo: TipoPowerUp
+        -duracion: float
+        -tiempoRestante: float
+        +aplicarEfecto(objetivo: GameObject)
+        +actualizar()
+    }
+    class Efecto {
+        -intensidad: float
+        -duracion: float
+        +aplicar(objetivo: ObjetoVisual)
+    }
+    class Particula {
+        -tiempoVida: float
+        -tamaño: float
+        +actualizar()
+        +estaViva(): boolean
+    }
+    GameObject <|-- ObjetoFisico
+    GameObject <|-- ObjetoVisual
+    ObjetoFisico <|-- Pelota
+    ObjetoFisico <|-- Paleta
+    ObjetoVisual <|-- Bloque
+    GameObject <|-- PowerUp
+    GameObject <|-- Particula
+    EstadoJuego <|-- EstadoMenu
+    EstadoJuego <|-- EstadoJugando
+    EstadoJuego <|-- EstadoPausa
+    EstadoJuego <|-- EstadoGameOver
+    Juego *-- SistemaFisico
+    Juego *-- SistemaRenderizado
+    Juego *-- SistemaAudio
+    Juego *-- GestorNiveles
+    Juego *-- Marcador
+    Juego *-- GestorVidas
+    GameObject *-- Posicion
+    GameObject *-- Velocidad
+    ObjetoVisual *-- Color
+    Bloque *-- "0..1" PowerUp
+    PowerUp *-- Efecto
+    SistemaParticulas *-- "0..*" Particula
+    Juego o-- EstadoJuego
+    EstadoJugando o-- "1..*" GameObject
+    SistemaFisico o-- "0..*" ObjetoFisico
+    SistemaRenderizado o-- "0..*" ObjetoVisual
+    GestorNiveles o-- "20..100" Bloque
+    SistemaFisico --o Posicion : usa
+    SistemaFisico --o Velocidad : usa
+    SistemaRenderizado --o Color : usa
+    Efecto --o SistemaParticulas : usa
+    @enduml
