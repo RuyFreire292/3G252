@@ -1,8 +1,13 @@
-#include<iostream> 
+// # comandos de preprocesador
+//
+#include <iostream>
+#include <Foco.hpp>
 using namespace std;
 int main()
 {
-    cout<<"Hola mundo"<<endl;
+    Foco foquito;
+    foquito.Encender();
+    foquito.Apagar();
+
     return 0;
 }
-
