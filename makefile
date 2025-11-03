@@ -16,9 +16,15 @@ bin/ejemplo : src/ejemplo.cpp
 runEjemplo : bin/ejemplo
 	./bin/ejemplo
 
+run : bin/animacion
+	./bin/animacion
 
+bin/animacion : src/animacion.cpp
+	c++ src/animacion.cpp -Iinclude -o bin/animacion -lftxui-screen -lftxui-dom -lftxui-component
 
- 
+runAnimacion : bin/animacion
+	./bin/animacion
+
  
 
 
